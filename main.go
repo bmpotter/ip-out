@@ -11,7 +11,7 @@ import (
 )
 
 // DefaultExcludes declares the default interface exclusions from output
-const DefaultExcludes = `^veth|docker|br-`
+const DefaultExcludes = `^veth|docker|br-|sit`
 
 type address []string
 
@@ -99,7 +99,7 @@ func main() {
 
 	if *pp {
 		const padding = 10
-		w := tabwriter.NewWriter(os.Stdout, 10, 2, 10, ' ', 0)
+		w := tabwriter.NewWriter(os.Stdout, 8, 2, 8, ' ', 0)
 		for _, o := range outs {
 			fmt.Fprintf(w, "%v\t%v\t%v\t\n", o.Name, o.LinkUp, o.Addresses)
 		}
