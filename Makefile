@@ -6,6 +6,8 @@ export PKGNAME := ip-out
 export TMPGOPATH := $(TMPDIR)/$(PKGNAME)-gopath
 export PKGPATH := $(TMPGOPATH)/src/github.com/open-horizon
 export PATH := $(TMPGOPATH)/bin:$(PATH)
+export VERSION := $(shell cat VERSION)
+export ARCH := $(shell uname -m)
 
 SHELL := /bin/bash
 ARCH = $(shell uname -m)
@@ -17,17 +19,18 @@ ifeq ($(ARCH),armv7l)
 	COMPILE_ARGS +=  GOARCH=arm GOARM=7
 endif
 
-all: $(PKGNAME)
+all: $(PKGNAME)-$(ARCH)-$(VERSION)
 
 # will always run b/c deps target is PHONY
-$(PKGNAME): gopathlinks
+$(PKGNAME)-$(ARCH)-$(VERSION): gopathlinks
 	cd $(PKGPATH)/$(PKGNAME) && \
 	  export GOPATH=$(TMPGOPATH); \
-	    $(COMPILE_ARGS) go build -o $(PKGNAME)
+	    $(COMPILE_ARGS) go build -o $(PKGNAME)-$(ARCH)-$(VERSION)
+			ln -s $(PKGNAME)-$(ARCH)-$(VERSION) $(PKGNAME)
 
 clean:
 	find ./vendor -maxdepth 1 -not -path ./vendor -and -not -iname "vendor.json" -print0 | xargs -0 rm -Rf
-	rm -f $(PKGNAME)
+	rm -f $(PKGNAME)*
 	rm -rf $(TMPGOPATH)
 
 # this is a symlink to facilitate building outside of user's GOPATH
@@ -38,7 +41,7 @@ gopathlinks:
 
 install: $(PKGNAME)
 	mkdir -p $(DESTDIR)/bin
-	cp $(PKGNAME) $(DESTDIR)/bin/$(PKGNAME)
+	cp -L $(PKGNAME) $(DESTDIR)/bin/$(PKGNAME)
 
 lint:
 	-golint ./... | grep -v "vendor/"
