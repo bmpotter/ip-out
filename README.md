@@ -8,6 +8,12 @@ Related Projects:
 
 * `ubuntu-classic-image` (http://github.com/open-horizon/ubuntu-classic-image): Produces complete system images
 
+## Development
+
+### Preconditions
+
+Install the `netlink` library with `go get github.com/vishvananda/netlink`
+
 ## Operations
 
 #### Execution
